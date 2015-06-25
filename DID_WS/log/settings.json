@@ -1,0 +1,9 @@
+{
+	"appenders" : [
+		{ "type" : "console"},
+		{ "type" : "file", "filename" : "log/logs/DID.log"}
+	],
+	"levels" : {
+		"[all]" : "INFO"
+	}
+}
