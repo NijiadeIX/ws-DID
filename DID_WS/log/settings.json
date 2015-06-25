@@ -1,9 +1,16 @@
 {
 	"appenders" : [
-		{ "type" : "console"},
-		{ "type" : "file", "filename" : "log/logs/DID.log"}
+		{ 
+			"type" : "console"
+		},
+		{ 
+			"type" : "dateFile", 
+			"filename" : "log/logs/DID",
+			"pattern" : "_yyyy-MM-dd.log",
+			"alwaysIncludePattern" : true
+		}
 	],
 	"levels" : {
-		"[all]" : "INFO"
+		"[all]" : "DEBUG"
 	}
 }
