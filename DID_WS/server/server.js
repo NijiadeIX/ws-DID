@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 
-var settings = require('./settings.json');
+var settings = require('../settings.json').server;
 var log = require('../log/log.js')('server');
 var router = require('./routes/routes.js');
 
@@ -19,6 +19,12 @@ function run(port) {
 		log.info('server run on 0.0.0.0:' +  port);
 		server.listen(port);
 	} else {
+		if (!settings || !settings.port || typeof settings.port != 'number') {
+			log.error('Please set the server port');
+			log.info('Server shutdown');
+			return;
+		}
+
 		log.info('server run on 0.0.0.0:' + settings.port);
 		server.listen(settings.port);
 	}

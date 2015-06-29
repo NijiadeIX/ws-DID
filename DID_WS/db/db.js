@@ -1,6 +1,6 @@
 var mysql = require('mysql');
 var log = require('../log/log.js')('db');
-var settings = require('./settings.json');
+var settings = require('../settings.json').mysql;
 
 var connection = mysql.createConnection(settings);
 
