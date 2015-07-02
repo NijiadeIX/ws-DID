@@ -1,15 +1,14 @@
-var express = require('express');
+	var express = require('express');
 var log = require('../../log/log.js')('route');
 
 var router = express.Router();
 
-router.get('/index', function(req, res) {
-	log.info('GET /index');
-	res.status(200).json({ "word" : "hello world" });
-});
+var department = require('./department.js');
+var dnisQuery = require('./dnisQuery.js');
+var accessQuery = require('./accessQuery.js');
 
-router.post('/demo', function(req, res) {
-	log.info('POST /demo');
-	res.status(200).json({"result" : "success"});
-});
+router.post('/service_number/get_department', department.postGetdepart);
+router.post('/access/get', accessQuery.postAccess);
+router.post('/callid/get', dnisQuery.postGetDnis);
+
 module.exports = router;
