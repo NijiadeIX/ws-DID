@@ -1,12 +1,10 @@
-var express = require('express');
+var express    = require('express');
 var bodyParser = require('body-parser');
-
-var settings = require('../settings.json').server;
-var log = require('../log/log.js')('server');
-var router = require('./routes/routes.js');
-
+var settings   = require('../settings/server.json');
+var log        = require('../core/log.js')('server');
+var router     = require('./routes/route.js');
 var jsonParser = bodyParser.json();
-var server = express();
+var server     = express();
 
 /**
  * used to start the server, optional parameter is port

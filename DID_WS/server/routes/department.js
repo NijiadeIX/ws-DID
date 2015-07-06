@@ -1,5 +1,5 @@
-var log = require('../../log/log.js')('route');
-var numDepartDao = require('../../db/numDepartDao.js');
+var log          = require('../../core/log.js')('route');
+var numDepartDao = require('../../core/models/numDepart.js');
 
 function postGetdepart(req, res) {
 	log.info('POST ' + req.path);

@@ -1,6 +1,6 @@
 var http = require('http');
-var URL = require('url');
-var log = require('../log/log.js')('httpAgent');
+var URL  = require('url');
+var log  = require('./log.js')('httpAgent');
 
 /**
  * HTTP get method

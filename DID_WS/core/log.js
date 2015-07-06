@@ -1,8 +1,13 @@
-var log4js = require('log4js');
-var path = require('path');
-var settings = require('../settings.json').log;
+var log4js   = require('log4js');
+var path     = require('path');
+var settings = require('../settings/log.json');
 /**
  * 获取一个logger
+ * log.trace()
+ * log.info()
+ * log.warn()
+ * log.error()
+ * log.fatal()
  * @param  {[string]} category logger的名字
  */
 function getLogger(category) {

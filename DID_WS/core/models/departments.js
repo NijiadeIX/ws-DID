@@ -1,5 +1,5 @@
-var log = require('../log/log.js')('dao');
-var connection = require('./db.js');
+var log = require('../log.js')('model');
+var connection = require('../database.js');
 var departments = null;
 var numDepart = null;
 
