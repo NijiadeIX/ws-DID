@@ -1,6 +1,7 @@
 var log       = require('../../core/log.js')('route');
 var settings  = require('./hotel.json'); //酒店webservice地址配置
 var numDepart = require('../../core/models/numDepart.js');
+var http 	  = require('../../core/httpAgent.js');
 
 function postAccess(req, res) {
 	var resBody;
