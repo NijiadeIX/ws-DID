@@ -1,0 +1,5 @@
+curl -X POST  -H 'content-type: application/json'  -d '{"callee_id":"10000"}' http://192.168.231.1:8888/service_number/get_department
+
+curl -X POST  -H 'content-type: application/json'  -d '{"department_id":1}' http://192.168.231.1:8888/access/get
+
+curl -X POST  -H 'content-type: application/json'  -d '{"department_id" : 1, "call_in_caller_id" : "1000", "call_in_callee_id" : "10000", "dtmf" : "12314","call_id" : "12314"}' http://192.168.231.1:8888/callid/get

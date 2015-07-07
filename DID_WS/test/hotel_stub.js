@@ -8,7 +8,7 @@ app.post('/call_number/customer/get_call_number', function(req, res) {
 	var calleeId = req.body.call_in_callee_id;
 	var dtmf = req.body.dtmf;
 
-	if (callerId == '1000' && calleeId == '10000' && dtmf = '10086') {
+	if (callerId == '1000' && calleeId == '10000' && dtmf == '10086') {
 		res.status(200).json({ response_code : 'hotel_success', call_out_caller_id : '20000', call_out_callee_id : '1001'});
 	} else {
 		res.status(200).json({ response_code : 'hotel_orders_error1'});
