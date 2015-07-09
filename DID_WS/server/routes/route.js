@@ -1,5 +1,5 @@
 var express    = require('express');
-var log        = require('../../core/log.js')('route');
+var log        = require('../../core/log.js')('route.js');
 var department = require('./department.js');
 var custom     = require('./custom.js');
 var router     = express.Router();

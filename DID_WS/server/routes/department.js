@@ -1,23 +1,45 @@
-var log          = require('../../core/log.js')('route');
-var numDepartDao = require('../../core/models/numDepart.js');
+var log          = require('../../core/log.js')('department.js');
+var numDepart = require('../models/numDepart.js');
 
 function postGetdepart(req, res) {
 	log.info('POST ' + req.path);
+	var resBody;
+	var resStatus;
 	
-	if (!req.body || !req.body.callee_id) {
-		res.status(200).json({ response_code : 'failure', message : 'parameter error'});
-		return;
-	}
+	//检查body里面需要的参数是否齐全
+	if (!req.body || req.body.callee_id === undefined) {
+		resStatus = 400;
+		resBody   = { error_msg : 'parameter error' };
 
-	var departId = numDepartDao.getNumDepart(req.body.callee_id, function(data) {
-		log.trace(data);
-		if (!data || !data.department_id || !data.service_type) {
-			res.status(200).json({ response_code : 'failure'});
+		log.trace(resStatus + ' ' + resBody);
+		res.status(resStatus).json(resBody);
+		return;
+	} 
+
+	//正常处理流程
+	numDepart.getNumDepart(req.body.callee_id, function(err, results) {
+		log.trace(results);
+		if (!results || 
+			!results[0] || 
+			results[0].department_id === undefined|| 
+			!results[0].service_type === undefined) {
+			resStatus = 404;
+
+			log.trace(resStatus);
+			res.status(resStatus).end();
 			return;
 		}
 
-		res.status(200).json({ department_id : data.department_id, service_type : data.service_type });
+		resStatus = 200;
+		resBody   = {
+			department_id : results[0].department_id, 
+			service_type : results[0].service_type
+		};
+
+		log.trace(resStatus + ' ' + resBody);
+		res.status(resStatus).json(resBody);
 	});
+
 
 }
 
