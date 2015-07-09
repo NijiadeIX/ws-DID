@@ -7,6 +7,15 @@ var db  = require('../../core/database.js');
  */
 var departments = {
 	/**
+	 * _query(sql, callback) or _query(sql, values, callback)
+	 */
+	_query : function(sql, values, callback) {
+		db.query(sql, values, function(err, results, fields) {
+			callback(err, results);
+		});		
+		this._query(sql, values, callback);	
+	},
+	/**
 	 * 根据部门id获取部门信息
 	 * @param  {[type]} departId 部门id
 	 * @param {function} callback 
@@ -14,9 +23,7 @@ var departments = {
 	getDepartmentById : function(departId, callback) {
 		var sql    = 'SELECT department_id, department_name, department_desc FROM departments WHERE department_id = ?';
 		var values = [departId];
-		db.query(sql, values, function(err, results, fields) {
-			callback(err, results);
-		});
+		this._query(sql, values, callback);
 	},
 
 	/**
@@ -27,9 +34,7 @@ var departments = {
 	getDepartmentByName : function(departName, callback) {
 		var sql    = 'SELECT department_id, department_name, department_desc FROM departments WHERE department_name = ?';
 		var values = [departName];
-		db.query(sql, values, function(err, results, fields) {
-			callback(err, results);
-		});
+		this._query(sql, values, callback);
 	},
 
 	/**
