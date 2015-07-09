@@ -5,7 +5,7 @@ var log  = require('./log.js')('httpAgent');
 /**
  * HTTP get method
  * @param  {string}   url      'http://www.example.com/index'
- * @param  {Function} callback function(res) [optional]
+ * @param  {function} callback function(err, res) [optional]
  */
 function get(url, callback) {
 	http.get(url, function(res) {
@@ -20,11 +20,12 @@ function get(url, callback) {
 				res.body = data;
 			}
 
-			log.trace('body:' + data);
-			if (callback) {
-				callback(res);
-			}
+			callback(null, res);
+
 		});
+	}).on('error', function(err) {
+		log.error(err.name + ':' + err.message);
+		callback(err, null);
 	});
 }
 
@@ -33,7 +34,7 @@ function get(url, callback) {
  * @param  {string}   url         'http://www.example.com/index'
  * @param  {string}   contentType 'application/json'
  * @param  {string}   body        [description]
- * @param  {Function} callback    function(res) [optional]
+ * @param  {Function} callback    function(err, res) [optional]
  */
 function post(url, contentType, body, callback) {
 	var _headers = {};
@@ -65,11 +66,11 @@ function post(url, contentType, body, callback) {
 				res.body = data;
 			}
 
-			log.trace('body:' + data);
-			if (callback) {
-				callback(res);
-			}
-		})
+			callback(null, res);
+		});
+	}).on('error', function(err) {
+		log.error(err.name + ':' + err.message);
+		callback(err, null);
 	});
 
 	req.write(body);
