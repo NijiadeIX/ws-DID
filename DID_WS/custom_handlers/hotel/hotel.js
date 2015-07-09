@@ -3,20 +3,9 @@ var settings  = require('./settings.json'); //酒店webservice地址配置
 var numDepart = require('../../server/models/numDepart.js');
 var http 	  = require('../../core/httpAgent.js');
 
-// function postAccess(req, res) {
-// 	var resBody;
-
-// 	var now = new Date();
-// 	var hours = now.getHours();
-// 	if (hours < 8 || hours > 23) {
-// 		resBody = { response_code : 'hotel_customer_rest' };
-// 	} else {
-// 		resBody = { response_code : 'hotel_success' };
-// 	}
-
-// 	res.status(200).json(resBody);
-// }
-
+/**
+ * 酒店接入控制的实现, 8点之前，11点之后禁止呼入
+ */
 function postAccess(data, callback) {
 	var statusCode = 200;
 	var _data;
@@ -32,11 +21,14 @@ function postAccess(data, callback) {
 	callback(statusCode, _data);
 }
 
+/**
+ * 酒店获取被叫号码的实现
+ */
 function postGetDnis(data, callback) {
 	var statusCode;
 	var _data;
 
-	if (data.call_in_callee_id === undefined) {
+	if (data.call_in_callee_id == undefined) {
 		statusCode = 400;
 		_data      = { error_msg : 'parameters error'};
 
@@ -44,7 +36,7 @@ function postGetDnis(data, callback) {
 		return;
 	}
 
-	if (data.service_type !== undefined) {	//如果传了service_tyep
+	if (data.service_type != undefined) {	//如果传了service_tyep
 		_getDnis(data.service_type, data, callback);
 	} else { 								//如果没传service_type只好自己查咯
 		var handleResult = function(err, results) {
@@ -59,8 +51,8 @@ function postGetDnis(data, callback) {
 
 			if (!results || 
 				!results[0] ||
-				results[0].department_id === undefined ||
-				results[0].service_type === undefined ||
+				results[0].department_id == undefined ||
+				results[0].service_type == undefined ||
 				results[0].department_id != data.department_id) {
 				statusCode = 404;
 				_data      = {};
@@ -77,47 +69,8 @@ function postGetDnis(data, callback) {
 }
 
 /**
- * 酒店号码转换对外的统一接口
- * @param  {[type]} req [description]
- * @param  {[type]} res [description]
- * @return {[type]}     [description]
+ * 获取被叫号码内部实现
  */
-// function postGetDnis(req, res) {
-// 	var resStatus;
-// 	var resBody;
-
-// 	if (!req.body || 
-// 		!req.body.call_in_caller_id || 
-// 		!req.body.call_in_callee_id || 
-// 		!req.body.dtmf ||
-// 		!req.body.call_id) {
-// 		resStatus = 400;
-// 		resBody = { error_msg : 'parameter error' };
-
-// 		res.status(resStatus).json(resBody);
-// 		return;
-// 	}
-
-// 	numDepart.getNumDepart(req.body.call_in_callee_id, function(data) {
-// 		log.trace('num_depart data:' +  data);
-// 		if (!data || !data.service_type) {
-// 			res.status(200).json({ response_code : 'failure', message : 'callee number does not exist'});
-// 			return;
-// 		}
-
-// 		switch (data.service_type) {
-// 			case 'supplier' :
-// 				getCustomerDnis(req, res);
-// 				break;
-// 			case 'customer' :
-// 				getSupplierDnis(req, res);
-// 				break;
-// 			default : 
-// 				res.status(200).json({ response_code : 'failure', message : 'service type error'});
-// 		}
-// 	});
-// }
-
 function _getDnis(serviceType, data, callback) {
 	//构造http的参数
 	var hostname = settings.host;
@@ -132,14 +85,14 @@ function _getDnis(serviceType, data, callback) {
 
 	var url;
 	var statusCode = 200;
-	var resBody = {};
-	var postData = {};
+	var resBody    = {};
+	var postData   = {};
 	switch(serviceType) {
 		case 'supplier':
 			url = 'http://' + host + '/call_number/supplier/get_call_number';
-			if (data.call_in_caller_id === undefined || 
-				data.call_in_callee_id === undefined ||
-				data.call_id === undefined) {
+			if (data.call_in_caller_id == undefined || 
+				data.call_in_callee_id == undefined ||
+				data.call_id == undefined) {
 				statusCode        = 400;
 				resBody.error_msg = 'parameters error';
 			} else {
@@ -151,10 +104,10 @@ function _getDnis(serviceType, data, callback) {
 			break;
 		case 'customer':
 			url = 'http://' + host + '/call_number/customer/get_call_number';
-			if (data.call_in_caller_id === undefined || 
-				data.call_in_callee_id === undefined ||
-				data.dtmf === undefined ||
-				data.call_id === undefined) {
+			if (data.call_in_caller_id == undefined || 
+				data.call_in_callee_id == undefined ||
+				data.dtmf == undefined ||
+				data.call_id == undefined) {
 				statusCode        = 400;
 				resBody.error_msg = 'parameters error';
 			} else {
@@ -176,7 +129,7 @@ function _getDnis(serviceType, data, callback) {
 		return;
 	}
 
-	//获取服务号码类型后的回掉函数
+	//调用酒店webservice后的回掉函数
 	var handleResponse = function(err, res) {
 		if (err) {
 			log.error(err.name + ':' + err.message);
@@ -214,11 +167,11 @@ function _getDnis(serviceType, data, callback) {
 
 		var _data = {};
 		_data.response_code = body.response_code;
-		if (body.call_out_caller_id !== undefined) {
+		if (body.call_out_caller_id != undefined) {
 			_data.call_out_caller_id = body.call_out_callee_id;
 		}
 
-		if (body.call_out_callee_id !== undefined) {
+		if (body.call_out_callee_id != undefined) {
 			_data.call_out_callee_id = body.call_out_callee_id;
 		}
 		callback(200, _data);
@@ -226,121 +179,6 @@ function _getDnis(serviceType, data, callback) {
 
 	http.post(url, 'application/json', JSON.stringify(postData), handleResponse);
 }
-
-
-// /**
-//  * 获取供应商的号码
-//  * @param  {[type]} req [description]
-//  * @param  {[type]} res [description]
-//  * @return {[type]}     [description]
-//  */
-// function getSupplierDnis(req, res) {
-// 	var callerNum = req.body.call_in_caller_id;
-// 	var calleeNum = req.body.call_in_callee_id;
-// 	var data = req.body.dtmf;
-// 	var callId = req.body.call_id;
-
-// 	var hostname = settings.host;
-// 	var port = settings.port;
-// 	var host;
-// 	if (port) {
-// 		host = hostname + ':' + port;
-// 	} else {
-// 		host = hostname;
-// 	}
-
-// 	var url = 'http://' + host + '/call_number/supplier/get_call_number';
-// 	log.trace(url);
-// 	var postData = {
-// 		call_in_caller_id : callerNum,
-// 		call_in_callee_id : calleeNum,
-// 		dtmf : data,
-// 		call_id : callId
-// 	}
-
-// 	var _res = res;
-// 	http.post(url, 'application/json', JSON.stringify(postData), function(res) {
-// 		var body = null;
-// 		if (res.body) {	
-// 			try {
-// 				body = JSON.parse(res.body);
-// 			} catch (err) {
-// 				log.error(err.name + ':' + err.message);
-// 			}
-// 		}
-
-// 		log.trace(body);
-
-// 		if (!body || !body.response_code) {
-// 			_res.status(200).json({ response_code : 'failure', message : 'hotel web service error'});
-// 			return;
-// 		}
-
-
-// 		_res.status(200).json({ 
-// 			response_code : body.response_code, 
-// 			call_out_caller_id : body.call_out_caller_id, 
-// 			call_out_callee_id : body.call_out_callee_id
-// 		});
-// 	});
-
-// 	//callback({ response_code : "hotel_success", call_out_caller_id : '20001', call_out_callee_id : '10001', call_id : null });
-// }
-
-// /**
-//  * 获取客户的号码
-//  * @param  {[type]} req [description]
-//  * @param  {[type]} res [description]
-//  * @return {[type]}     [description]
-//  */
-// function getCustomerDnis(req, res) {
-// 	var callerNum = req.body.call_in_caller_id;
-// 	var calleeNum = req.body.call_in_callee_id;
-// 	var data = req.body.dtmf;
-// 	var callId = req.body.call_id;
-
-// 	var hostname = settings.host;
-// 	var port = settings.port;
-// 	var host;
-// 	if (port) {
-// 		host = hostname + ':' + port;
-// 	} else {
-// 		host = hostname;
-// 	}
-
-// 	var url = 'http://' + host + '/call_number/customer/get_call_number';
-// 	var postData = {
-// 		call_in_caller_id : callerNum,
-// 		call_in_callee_id : calleeNum,
-// 		dtmf : data,
-// 		call_id : callId
-// 	}
-
-// 	var _res = res;
-// 	http.post(url, 'application/json', JSON.stringify(postData), function(res) {
-// 		var body = {};
-// 		if (res.body) {	
-// 			try {
-// 				body = JSON.parse(res.body);
-// 			} catch (err) {
-// 				log.error(err.name + ':' + err.message);
-// 			}
-// 		}
-
-// 		log.trace(body);
-
-// 		if (!body || !body.response_code || !body.call_out_caller_id || !body.call_out_callee_id) {
-// 			_res.status(200).json({ response_code : 'failure', message : 'hotel web service error'});
-// 			return;
-// 		}
-
-// 		_res.status(200).json({ 
-// 			response_code : body.response_code, 
-// 			call_out_caller_id : body.call_out_caller_id, 
-// 			call_out_callee_id : body.call_out_callee_id
-// 		});
-// 	});
-// }
 
 module.exports.postAccess = postAccess;
 module.exports.postGetDnis = postGetDnis;

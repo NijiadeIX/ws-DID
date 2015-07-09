@@ -3,15 +3,17 @@ var numDepart = require('../models/numDepart.js');
 
 function postGetdepart(req, res) {
 	log.info('POST ' + req.path);
+	log.info(req.body);
 	var resBody;
 	var resStatus;
 	
 	//检查body里面需要的参数是否齐全
-	if (!req.body || req.body.callee_id === undefined) {
+	if (!req.body || req.body.callee_id == undefined) {
 		resStatus = 400;
 		resBody   = { error_msg : 'parameter error' };
 
-		log.trace(resStatus + ' ' + resBody);
+		log.info('statusCode ' + resStatus);
+		log.info(resBody);
 		res.status(resStatus).json(resBody);
 		return;
 	} 
@@ -21,12 +23,14 @@ function postGetdepart(req, res) {
 		log.trace(results);
 		if (!results || 
 			!results[0] || 
-			results[0].department_id === undefined|| 
-			!results[0].service_type === undefined) {
+			results[0].department_id == undefined || 
+			results[0].service_type == undefined) {
 			resStatus = 404;
+			resBody = { error_msg : 'not found'};
 
-			log.trace(resStatus);
-			res.status(resStatus).end();
+			res.status(resStatus).json(resBody);
+			log.info('statusCode ' + resStatus);
+			log.info(resBody);
 			return;
 		}
 
@@ -36,8 +40,9 @@ function postGetdepart(req, res) {
 			service_type : results[0].service_type
 		};
 
-		log.trace(resStatus + ' ' + resBody);
 		res.status(resStatus).json(resBody);
+		log.info('statusCode ' + resStatus);
+		log.info(resBody);
 	});
 
 

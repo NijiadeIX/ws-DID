@@ -11,6 +11,6 @@
 		}
 	],
 	"levels" : {
-		"[all]" : "TRACE"
+		"[all]" : "INFO"
 	}	
 }

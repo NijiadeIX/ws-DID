@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var settings   = require('../settings/server.json');
 var log        = require('../core/log.js')('server.js');
 var router     = require('./routes/route.js');
+var db		   = require('../core/database.js');
 var jsonParser = bodyParser.json();
 var server     = express();
 
@@ -29,19 +30,22 @@ function run(port) {
 }
 
 function configure() {
+	db.connect();
+
 	server.use(jsonParser);
 	server.use(errHandler);
-
 	server.use(router);
 }
  
 function errHandler(err, req, res, next) {
 	if (err) {
-		switch(err.name) {
-			default : 
-				log.error(err.name + ':' + err.message);
-				res.status(err.status || 500).json({ "error_msg" : "server error"});
-		}
+		log.error(err.name + ':' + err.message);
+
+		var statusCode = err.status || 500;
+		var resBody    = (statusCode == 500? { error_msg : "server error"} : { error_msg : "something bad in your request" });
+		log.info('statudCode ' + statudCode);
+		log.info(resBody);
+		res.status(statudCode).json(resBody);
 	}
 } 
 

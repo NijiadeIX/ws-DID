@@ -65,8 +65,8 @@ describe('Department', function() {
 	it('/service_number/get_department 5', function(done){
 		httpAgent.post(
 			'http://127.0.0.1:8888/service_number/get_department', 
-			'application/json', 
-			'', 
+			'application/xml', 
+			'{"callee_id": "10001"}', 
 			function(err, res) {
 				expect(res.statusCode).to.eql(400);
 				done();

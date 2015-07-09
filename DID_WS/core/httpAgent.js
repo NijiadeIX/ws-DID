@@ -1,6 +1,5 @@
 var http = require('http');
 var URL  = require('url');
-var log  = require('./log.js')('httpAgent');
 
 /**
  * HTTP get method
@@ -24,7 +23,6 @@ function get(url, callback) {
 
 		});
 	}).on('error', function(err) {
-		log.error(err.name + ':' + err.message);
 		callback(err, null);
 	});
 }
@@ -69,7 +67,6 @@ function post(url, contentType, body, callback) {
 			callback(null, res);
 		});
 	}).on('error', function(err) {
-		log.error(err.name + ':' + err.message);
 		callback(err, null);
 	});
 
